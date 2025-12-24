@@ -31,11 +31,11 @@ export class CronParser {
     const [minuteExpr, hourExpr, dayOfMonthExpr, monthExpr, dayOfWeekExpr, ...commandParts] = parts;
 
     return {
-      minute: this.fieldParser.parseField(minuteExpr, FIELD_CONSTRAINTS[CronField.MINUTE]),
-      hour: this.fieldParser.parseField(hourExpr, FIELD_CONSTRAINTS[CronField.HOUR]),
-      dayOfMonth: this.fieldParser.parseField(dayOfMonthExpr, FIELD_CONSTRAINTS[CronField.DAY_OF_MONTH]),
-      month: this.fieldParser.parseField(monthExpr, FIELD_CONSTRAINTS[CronField.MONTH]),
-      dayOfWeek: this.fieldParser.parseField(dayOfWeekExpr, FIELD_CONSTRAINTS[CronField.DAY_OF_WEEK]),
+      minute: this.fieldParser.parseFields(minuteExpr, FIELD_CONSTRAINTS[CronField.MINUTE]),
+      hour: this.fieldParser.parseFields(hourExpr, FIELD_CONSTRAINTS[CronField.HOUR]),
+      dayOfMonth: this.fieldParser.parseFields(dayOfMonthExpr, FIELD_CONSTRAINTS[CronField.DAY_OF_MONTH]),
+      month: this.fieldParser.parseFields(monthExpr, FIELD_CONSTRAINTS[CronField.MONTH]),
+      dayOfWeek: this.fieldParser.parseFields(dayOfWeekExpr, FIELD_CONSTRAINTS[CronField.DAY_OF_WEEK]),
       command: commandParts.join(' ')
     };
   }

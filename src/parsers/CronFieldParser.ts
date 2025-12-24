@@ -1,4 +1,4 @@
-import { FieldConstraints } from '../models/CronExpression';
+import { FieldConstraints, CronField, DAY_OF_WEEK_NAME_TO_NUMBER, MONTH_NAME_TO_NUMBER } from '../models/CronExpression';
 import { CronValidator } from '../validators/CronValidator';
 
 /**
@@ -10,6 +10,48 @@ export class CronFieldParser {
 
   constructor(validator: CronValidator) {
     this.validator = validator;
+  }
+
+  /**
+   * Normalizes a value that might be a name (Mon, Jan, etc.) to a number
+   * @param value - The value to normalize (string or number)
+   * @param constraints - The field constraints to determine which mapping to use
+   * @returns The numeric value
+   */
+  private normalizeValue(value: string, constraints: FieldConstraints): number {
+    // Try to parse as a number first
+    const numValue = parseInt(value.trim(), 10);
+    if (!isNaN(numValue)) {
+      return numValue;
+    }
+
+    // If not a number, try to map from name
+    const upperValue = value.trim().toUpperCase();
+    
+    if (constraints.name === 'day of week') {
+      const dayNum = DAY_OF_WEEK_NAME_TO_NUMBER[upperValue];
+      if (dayNum !== undefined) {
+        return dayNum;
+      }
+    } else if (constraints.name === 'month') {
+      const monthNum = MONTH_NAME_TO_NUMBER[upperValue];
+      if (monthNum !== undefined) {
+        return monthNum;
+      }
+    }
+
+    throw new Error(`Invalid value for ${constraints.name}: ${value}`);
+  }
+
+  public parseFields(expression: string, constraints: FieldConstraints): number[]{
+    this.validator.validateFieldNotEmpty(expression, constraints.name);
+
+    const expressionArray: string[] = expression.split(",");
+    const values: number[] = expressionArray.flatMap(expr => {
+      return this.parseField(expr, constraints);
+    })
+
+    return [...new Set(values)].sort((a, b) => a - b);
   }
 
   /**
@@ -84,18 +126,14 @@ export class CronFieldParser {
   }
 
   /**
-   * Parses range expressions (e.g., 1-5 or 1-5/2)
+   * Parses range expressions (e.g., 1-5 or 1-5/2 or Mon-Wed)
    */
   private parseRange(expression: string, constraints: FieldConstraints): number[] {
     const [rangePart, stepPart] = expression.split('/');
     const [startStr, endStr] = rangePart.split('-');
 
-    const start = parseInt(startStr.trim(), 10);
-    const end = parseInt(endStr.trim(), 10);
-
-    if (isNaN(start) || isNaN(end)) {
-      throw new Error(`Invalid range expression: ${expression}`);
-    }
+    const start = this.normalizeValue(startStr, constraints);
+    const end = this.normalizeValue(endStr, constraints);
 
     this.validator.validateValueInRange(start, constraints);
     this.validator.validateValueInRange(end, constraints);
@@ -118,14 +156,10 @@ export class CronFieldParser {
   }
 
   /**
-   * Parses single value expressions (e.g., 5)
+   * Parses single value expressions (e.g., 5 or Mon or Jan)
    */
   private parseSingleValue(expression: string, constraints: FieldConstraints): number[] {
-    const value = parseInt(expression.trim(), 10);
-
-    if (isNaN(value)) {
-      throw new Error(`Invalid numeric value: ${expression}`);
-    }
+    const value = this.normalizeValue(expression, constraints);
 
     this.validator.validateValueInRange(value, constraints);
 

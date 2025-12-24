@@ -40,3 +40,33 @@ export const FIELD_CONSTRAINTS: Record<CronField, FieldConstraints> = {
   [CronField.MONTH]: { min: 1, max: 12, name: 'month' },
   [CronField.DAY_OF_WEEK]: { min: 0, max: 6, name: 'day of week' }
 };
+
+/**
+ * Reverse mapping from names to numbers for day of week and month
+ */
+export const DAY_OF_WEEK_NAME_TO_NUMBER: Record<string, number> = {
+  'SUN': 0, 'SUNDAY': 0,
+  'MON': 1, 'MONDAY': 1,
+  'TUE': 2, 'TUESDAY': 2,
+  'WED': 3, 'WEDNESDAY': 3,
+  'THU': 4, 'THURSDAY': 4,
+  'FRI': 5, 'FRIDAY': 5,
+  'SAT': 6, 'SATURDAY': 6
+};
+
+export const MONTH_NAME_TO_NUMBER: Record<string, number> = {
+  'JAN': 1, 'JANUARY': 1,
+  'FEB': 2, 'FEBRUARY': 2,
+  'MAR': 3, 'MARCH': 3,
+  'APR': 4, 'APRIL': 4,
+  'MAY': 5,
+  'JUN': 6, 'JUNE': 6,
+  'JUL': 7, 'JULY': 7,
+  'AUG': 8, 'AUGUST': 8,
+  'SEP': 9, 'SEPTEMBER': 9,
+  'OCT': 10, 'OCTOBER': 10,
+  'NOV': 11, 'NOVEMBER': 11,
+  'DEC': 12, 'DECEMBER': 12
+};
+
+

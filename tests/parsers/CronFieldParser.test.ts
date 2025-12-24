@@ -48,7 +48,7 @@ describe('CronFieldParser', () => {
 
     it('should throw error for non-numeric value', () => {
       expect(() => parser.parseField('abc', FIELD_CONSTRAINTS[CronField.MINUTE])).toThrow(
-        'Invalid numeric value: abc'
+        'Invalid value for minute: abc'
       );
     });
   });
@@ -79,7 +79,7 @@ describe('CronFieldParser', () => {
 
     it('should throw error for invalid range format', () => {
       expect(() => parser.parseField('a-b', FIELD_CONSTRAINTS[CronField.MINUTE])).toThrow(
-        'Invalid range expression: a-b'
+        'Invalid value for minute: a'
       );
     });
   });
